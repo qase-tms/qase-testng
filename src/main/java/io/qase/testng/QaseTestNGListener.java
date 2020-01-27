@@ -58,7 +58,11 @@ public class QaseTestNGListener implements ITestListener {
             logger.info(REQUIRED_PARAMETER_WARNING_MESSAGE, CASE_LIST_KEY);
             return;
         }
-        cases = Arrays.stream(casesString.split(",")).map(Long::parseLong).collect(Collectors.toList());
+        try {
+            cases = Arrays.stream(casesString.split(",")).map(Long::parseLong).collect(Collectors.toList());
+        } catch (NumberFormatException e) {
+            logger.info(REQUIRED_PARAMETER_WARNING_MESSAGE, CASE_LIST_KEY);
+        }
 
         logger.info("Qase cases - {}", cases);
     }
