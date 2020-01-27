@@ -2,20 +2,20 @@
 [ ![Download](https://api.bintray.com/packages/qase/maven/io.qase.qase-testng/images/download.svg?version=0.0.1) ](https://bintray.com/qase/maven/io.qase.qase-testng/0.0.1/link)
 [![License](https://lxgaming.github.io/badges/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
-## Описание ##
-Позволяет выгружать в Qase TMS результаты выполнения автотестов.
+## Description ##
+This integration uploads test run results to Qase TMS via API.
 
-Привязка автотестов к кейсам из Qase TMS осуществляется при помощи аннотации @CaseId
+To link autotest to test case in Qase TMS use annotation `@CaseId`
 
-### Обязательные параметры ###
-Все обязательные параметры передаются либо через системные переменные, либо через переменные окружения:
+### Required params ###
+All required params are passed through system variables or enviroment variables:
 
-|  Ключ     | Описание |
+|  Key     | Description |
 | :----------: | :----------: |
 | qase.project.code | Project Code |
 | qase.run.id       | Run Id |
-| qase.api.token    | API Token для доступа к Qase API |
-| qase.case.list    | Список кейсов, разделенных запятой |
+| qase.api.token    | Qase API Token |
+| qase.case.list    | A list of test cases with comma delimiter |
 
 
 ## Maven ##
@@ -39,7 +39,7 @@ Add the following dependency and repository to your pom.xml:
 ```
 
 
-## Пример передачи обязательных параметров ##
+## Run example ##
 
 ```
 mvn clean test -Dqase.project.code=PRJ -Dqase.run.id=123 -Dqase.api.token=ebc2ifu21321edqwd2214 -Dqase.case.list=123,321,124
