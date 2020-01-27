@@ -3,6 +3,7 @@ package io.qase.testng;
 import io.qase.api.QaseApi;
 import io.qase.api.enums.RunResultStatus;
 import io.qase.api.models.v1.testrunresults.add.CreateUpdateTestRunResultResponse;
+import io.qase.api.models.v1.testrunresults.add.Step;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.ITestContext;
@@ -10,6 +11,7 @@ import org.testng.ITestListener;
 import org.testng.ITestResult;
 
 import java.lang.reflect.Method;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -68,17 +70,18 @@ public class QaseTestNGListener implements ITestListener {
     }
 
     public void onTestStart(ITestResult result) {
-
     }
 
     public void onTestSuccess(ITestResult result) {
         Long caseId = getCaseId(result);
-        sendResult(caseId, RunResultStatus.passed);
+        Duration timeSpent = Duration.ofMillis(result.getEndMillis() - result.getStartMillis());
+        sendResult(caseId, RunResultStatus.passed, timeSpent);
     }
 
     public void onTestFailure(ITestResult result) {
         Long caseId = getCaseId(result);
-        sendResult(caseId, RunResultStatus.failed);
+        Duration timeSpent = Duration.ofMillis(result.getEndMillis() - result.getStartMillis());
+        sendResult(caseId, RunResultStatus.failed, timeSpent);
     }
 
     public void onTestSkipped(ITestResult result) {
@@ -90,17 +93,16 @@ public class QaseTestNGListener implements ITestListener {
     }
 
     public void onStart(ITestContext context) {
-
     }
 
     public void onFinish(ITestContext context) {
 
     }
 
-    private void sendResult(Long caseId, RunResultStatus status) {
+    private void sendResult(Long caseId, RunResultStatus status, Duration timeSpent) {
         if (caseId != null && cases != null && cases.contains(caseId)) {
             CreateUpdateTestRunResultResponse createUpdateTestRunResultResponse = qaseApi.testRunResults()
-                    .create(projectCode, Long.parseLong(runId), caseId, status);
+                    .create(projectCode, Long.parseLong(runId), caseId, status, timeSpent, null, null, null, new Step[0]);
             if (createUpdateTestRunResultResponse.getStatus() != null && !createUpdateTestRunResultResponse.getStatus()) {
                 logger.info(createUpdateTestRunResultResponse.getErrorMessage());
             }
