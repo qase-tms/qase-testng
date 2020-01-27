@@ -2,6 +2,7 @@ package io.qase.testng;
 
 import io.qase.api.QaseApi;
 import io.qase.api.enums.RunResultStatus;
+import io.qase.api.models.v1.testrunresults.add.CreateUpdateTestRunResultResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.ITestContext;
@@ -42,6 +43,7 @@ public class QaseTestNGListener implements ITestListener {
             logger.info(REQUIRED_PARAMETER_WARNING_MESSAGE, PROJECT_CODE_KEY);
             return;
         }
+        logger.info("Qase project code - {}", projectCode);
 
         runId = System.getProperty(RUN_ID_KEY, System.getenv(RUN_ID_KEY));
         if (runId == null) {
@@ -49,12 +51,16 @@ public class QaseTestNGListener implements ITestListener {
             return;
         }
 
+        logger.info("Qase run id - {}", runId);
+
         String casesString = System.getProperty(CASE_LIST_KEY, System.getenv(CASE_LIST_KEY));
         if (casesString == null) {
             logger.info(REQUIRED_PARAMETER_WARNING_MESSAGE, CASE_LIST_KEY);
             return;
         }
         cases = Arrays.stream(casesString.split(",")).map(Long::parseLong).collect(Collectors.toList());
+
+        logger.info("Qase cases - {}", cases);
     }
 
     public void onTestStart(ITestResult result) {
@@ -63,16 +69,12 @@ public class QaseTestNGListener implements ITestListener {
 
     public void onTestSuccess(ITestResult result) {
         Long caseId = getCaseId(result);
-        if (caseId != null && cases != null && cases.contains(caseId)) {
-            qaseApi.testRunResults().create(projectCode, Long.parseLong(runId), caseId, RunResultStatus.passed);
-        }
+        sendResult(caseId, RunResultStatus.passed);
     }
 
     public void onTestFailure(ITestResult result) {
         Long caseId = getCaseId(result);
-        if (caseId != null && cases != null && cases.contains(caseId)) {
-            qaseApi.testRunResults().create(projectCode, Long.parseLong(runId), caseId, RunResultStatus.failed);
-        }
+        sendResult(caseId, RunResultStatus.failed);
     }
 
     public void onTestSkipped(ITestResult result) {
@@ -89,6 +91,16 @@ public class QaseTestNGListener implements ITestListener {
 
     public void onFinish(ITestContext context) {
 
+    }
+
+    private void sendResult(Long caseId, RunResultStatus status) {
+        if (caseId != null && cases != null && cases.contains(caseId)) {
+            CreateUpdateTestRunResultResponse createUpdateTestRunResultResponse = qaseApi.testRunResults()
+                    .create(projectCode, Long.parseLong(runId), caseId, status);
+            if (createUpdateTestRunResultResponse.getStatus() != null && !createUpdateTestRunResultResponse.getStatus()) {
+                logger.info(createUpdateTestRunResultResponse.getErrorMessage());
+            }
+        }
     }
 
     private Long getCaseId(ITestResult result) {
