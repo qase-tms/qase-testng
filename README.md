@@ -12,7 +12,7 @@
 
 |  Ключ     | Описание |
 | :----------: | :----------: |
-| qase.project_code | Project Code |
+| qase.project.code | Project Code |
 | qase.run.id       | Run Id |
 | qase.api.token    | API Token для доступа к Qase API |
 | qase.case.list    | Список кейсов, разделенных запятой |
@@ -41,5 +41,5 @@ Add the following dependency and repository to your pom.xml:
 ## Пример передачи обязательных параметров ##
 
 ```
-mvn clean test -Dqase.project_code=123 -Dqase.run.id=123 -Dqase.api.token=ebc2ifu21321edqwd2214 -Dqase.case.list=123,321,124
+mvn clean test -Dqase.project.code=123 -Dqase.run.id=123 -Dqase.api.token=ebc2ifu21321edqwd2214 -Dqase.case.list=123,321,124
 ```
