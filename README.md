@@ -8,7 +8,7 @@ This integration uploads test run results to Qase TMS via API.
 To link autotest to test case in Qase TMS use annotation `@CaseId`
 
 ### Required params ###
-All required params are passed through system variables or enviroment variables:
+All required params are passed through system properties or enviroment variables:
 
 |  Key     | Description |
 | :----------: | :----------: |
