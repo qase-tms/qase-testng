@@ -26,6 +26,7 @@ Add the following dependency and repository to your pom.xml:
     <groupId>io.qase</groupId>
     <artifactId>qase-testng</artifactId>
     <version>0.0.1</version>
+    <scope>test</scope>
 </dependency>
 ```
 
