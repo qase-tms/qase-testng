@@ -1,1 +1,2 @@
-io.qase.testng.QaseTestNGListener
+io.qase.testng.QaseListener
+io.qase.testng.QaseAnnotationTransformer

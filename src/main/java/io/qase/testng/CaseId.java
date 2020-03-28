@@ -7,5 +7,5 @@ import java.lang.annotation.*;
 @Documented
 public @interface CaseId {
     long value();
-
+    boolean hasDataSet() default false;
 }
