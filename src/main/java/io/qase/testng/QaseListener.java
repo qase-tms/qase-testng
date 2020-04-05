@@ -2,7 +2,7 @@ package io.qase.testng;
 
 import io.qase.api.QaseApi;
 import io.qase.api.enums.RunResultStatus;
-import io.qase.api.models.v1.testrunresults.Step;
+import io.qase.api.exceptions.QaseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.ITestContext;
@@ -100,8 +100,11 @@ public class QaseListener implements ITestListener {
 
     private void sendResult(Long caseId, RunResultStatus status, Duration timeSpent) {
         if (caseId != null && cases != null && cases.contains(caseId)) {
-            qaseApi.testRunResults()
-                    .create(projectCode, Long.parseLong(runId), caseId, status, timeSpent, null, null, null);
+            try {
+                qaseApi.testRunResults().create(projectCode, Long.parseLong(runId), caseId, status, timeSpent, null, null, null);
+            } catch (QaseException e) {
+                logger.error(e.getMessage());
+            }
         }
     }
 
