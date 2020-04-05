@@ -2,8 +2,7 @@ package io.qase.testng;
 
 import io.qase.api.QaseApi;
 import io.qase.api.enums.RunResultStatus;
-import io.qase.api.models.v1.testrunresults.add.CreateUpdateTestRunResultResponse;
-import io.qase.api.models.v1.testrunresults.add.Step;
+import io.qase.api.exceptions.QaseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.ITestContext;
@@ -16,8 +15,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class QaseTestNGListener implements ITestListener {
-    private static final Logger logger = LoggerFactory.getLogger(QaseTestNGListener.class);
+public class QaseListener implements ITestListener {
+    private static final Logger logger = LoggerFactory.getLogger(QaseListener.class);
     private static final String REQUIRED_PARAMETER_WARNING_MESSAGE = "Required parameter '{}' not specified";
     private String projectCode;
     private String runId;
@@ -32,7 +31,7 @@ public class QaseTestNGListener implements ITestListener {
 
     private static final String CASE_LIST_KEY = "qase.case.list";
 
-    public QaseTestNGListener() {
+    public QaseListener() {
         String apiToken = System.getProperty(API_TOKEN_KEY, System.getenv(API_TOKEN_KEY));
         if (apiToken == null) {
             logger.info(REQUIRED_PARAMETER_WARNING_MESSAGE, API_TOKEN_KEY);
@@ -101,10 +100,10 @@ public class QaseTestNGListener implements ITestListener {
 
     private void sendResult(Long caseId, RunResultStatus status, Duration timeSpent) {
         if (caseId != null && cases != null && cases.contains(caseId)) {
-            CreateUpdateTestRunResultResponse createUpdateTestRunResultResponse = qaseApi.testRunResults()
-                    .create(projectCode, Long.parseLong(runId), caseId, status, timeSpent, null, null, null, new Step[0]);
-            if (createUpdateTestRunResultResponse.getStatus() != null && !createUpdateTestRunResultResponse.getStatus()) {
-                logger.info(createUpdateTestRunResultResponse.getErrorMessage());
+            try {
+                qaseApi.testRunResults().create(projectCode, Long.parseLong(runId), caseId, status, timeSpent, null, null, null);
+            } catch (QaseException e) {
+                logger.error(e.getMessage());
             }
         }
     }

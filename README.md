@@ -8,7 +8,7 @@ This integration uploads test run results to Qase TMS via API.
 To link autotest to test case in Qase TMS use annotation `@CaseId`
 
 ### Required params ###
-All required params are passed through system properties or enviroment variables:
+All required params are passed through system properties or environment variables:
 
 |  Key     | Description |
 | :----------: | :----------: |
@@ -25,7 +25,7 @@ Add the following dependency and repository to your pom.xml:
 <dependency>
     <groupId>io.qase</groupId>
     <artifactId>qase-testng</artifactId>
-    <version>0.0.1</version>
+    <version>1.0.0</version>
     <scope>test</scope>
 </dependency>
 ```
